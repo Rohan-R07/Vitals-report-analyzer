@@ -136,42 +136,105 @@ class Backend:
         hf_token = os.getenv("HF_TOKEN")
 
         prompt = f"""
-            You are a medical report explanation assistant.
+            You are a medical report analysis API.
 
-            Predicted Condition:
-            {prediction_name}
+            Input:
+            Condition: {prediction_name}
 
-            Extracted Blood Values:
+            Blood Values:
             {values}
 
-            Tasks:
-
-            1. Explain the abnormal findings.
-            2. Explain what these values may indicate.
-            3. Recommend the type of specialist that may be consulted.
-            4. Suggest general next steps.
-            5. Suggest lifestyle and preventive measures.
+            Return ONLY valid JSON.
+            Do not return markdown.
+            Do not return explanations outside JSON.
+            Do not wrap JSON in code blocks.
 
             Rules:
-            - Use simple language.
-            - Do not prescribe medicines.
-            - Do not provide a definitive diagnosis.
-            - Focus only on the provided values.
 
-            Output format:
+            * Use concise responses.
+            * Use simple language.
+            * No diagnosis claims.
+            * No medication suggestions.
+            * No legal or medical disclaimers.
+            * Focus only on provided values.
+            * Diet must use common foods.
+            * Daily routine must be realistic.
+            * Maximum 3 items per list unless necessary.
+            * Keep total response compact.
 
-            ## Abnormal Findings
+            Required JSON Format:
 
-            ## What These Findings Mean
+            {{
+            "overview": {{
+            "condition": "",
+            "severity": "",
+            "summary": ""
+            }},
 
-            ## Recommended Specialist
+            "abnormal_findings": [
+            {{
+            "parameter": "",
+            "status": "",
+            "impact": ""
+            }}
+            ],
 
-            ## Suggested Next Steps
+            "health_effects": [
+            ""
+            ],
 
-            ## Prevention Tips
+            "recommended_specialist": {{
+            "name": "",
+            "reason": ""
+            }},
 
-            ## Summary
-            """
+            "next_steps": [
+            ""
+            ],
+
+            "diet_plan": {{
+            "breakfast": [],
+            "lunch": [],
+            "dinner": [],
+            "snacks": []
+            }},
+
+            "foods_to_prefer": [],
+
+            "foods_to_limit": [],
+
+            "daily_plan": [
+            {{
+            "time": "",
+            "activity": ""
+            }}
+            ],
+
+            "hydration": {{
+            "target": "",
+            "tip": ""
+            }},
+
+            "exercise": {{
+            "duration": "",
+            "activities": []
+            }},
+
+            "monitoring": [
+            {{
+            "task": "",
+            "frequency": ""
+            }}
+            ],
+
+            "warning_signs": [],
+
+            "prevention_tips": [],
+
+            "quick_summary": []
+            }}
+        """
+
         client = OpenAI(
             base_url="https://router.huggingface.co/v1",
             api_key=hf_token,
@@ -190,32 +253,33 @@ class Backend:
         return completion.choices[0].message.content
         
     
-# --------TESTING----------
+if __name__ == "__main__":
+    # --------TESTING----------
 
-# Initializing the backend    
-# initBackend = Backend()
+    # Initializing the backend    
+    initBackend = Backend()
 
-# #setting up the dataset
-# initBackend.setDataset("medical_dataset.xlsx")
+    #setting up the dataset
+    initBackend.setDataset("medical_dataset.xlsx")
 
-# #training a model
-# initBackend.trainModel()
+    #training a model
+    initBackend.trainModel()
 
-# #loading the .pkl file which was created after training a model
-# initBackend.loadModel()
+    #loading the .pkl file which was created after training a model
+    initBackend.loadModel()
 
-# #storing extracted pdf content in a variable valu
-# valu = initBackend.extractPdfValues("sampleReport.pdf")
+    #storing extracted pdf content in a variable valu
+    valu = initBackend.extractPdfValues("sampleReport.pdf")
 
-# #storing predicted values inside a variable prediction
-# prediction = initBackend.predict(valu)
+    #storing predicted values inside a variable prediction
+    prediction = initBackend.predict(valu)
 
-# #mapping the predicted value with a specific disease
-# prediction_name = initBackend.getPredictionName(
-#     prediction
-# )
+    #mapping the predicted value with a specific disease
+    prediction_name = initBackend.getPredictionName(
+        prediction
+    )
 
-# #finally using hugging face tokens to generate a output 
-# print(
-#     initBackend.generateExplaination(prediction_name,valu)
-# )
+    #finally using hugging face tokens to generate a output 
+    print(
+        initBackend.generateExplaination(prediction_name,valu)
+    )

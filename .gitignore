@@ -5,3 +5,4 @@ medical_dataset.xlsx
 sampleReport.pdf
 venv/
 __pycache__/
+test.py

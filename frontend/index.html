@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Report Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <div class="background-blobs">
+        <div class="blob blob-1"><
+            /div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section glass-card animate-fade-in">
+            <h1>AI Medical <span class="gradient-text">Analyser</span></h1>
+            <p class="subtitle">Upload your blood test report PDF for a comprehensive AI-powered health analysis and personalized recommendations.</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">
+                    <span class="highlight">Click to upload</span> or drag and drop
+                </div>
+                <p class="file-info">PDF (Max 10MB)</p>
+                <input type="file" id="pdfInput" accept=".pdf" hidden>
+            </div>
+
+            <div id="statusMessage" class="status-message hidden">
+                <div class="spinner"></div>
+                <span id="statusText">Processing your report...</span>
+            </div>
+        </section>
+
+        <!-- Results Dashboard (Hidden by default) -->
+        <div id="resultsDashboard" class="hidden">
+            <div class="dashboard-grid">
+                
+                <!-- Overview Panel -->
+                <section class="glass-card overview-panel">
+                    <div class="card-header">
+                        <h2>Health Overview</h2>
+                        <span id="severityBadge" class="badge">Normal</span>
+                    </div>
+                    <div class="overview-content">
+                        <div class="condition-display">
+                            <label>Predicted Condition</label>
+                            <h3 id="predictedCondition">---</h3>
+                        </div>
+                        <div class="summary-display">
+                            <label>Analysis Summary</label>
+                            <p id="analysisSummary">---</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Summary / Health Effects -->
+                <section class="glass-card health-impact">
+                    <h2>Health Impact</h2>
+                    <ul id="healthEffectsList" class="info-list"></ul>
+                </section>
+
+                <!-- Abnormal Findings Panel -->
+                <section class="glass-card abnormal-findings full-width">
+                    <h2>Abnormal Findings</h2>
+                    <div class="table-container">
+                        <table id="findingsTable">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Status</th>
+                                    <th>Explanation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="findingsBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Specialist Recommendation -->
+                <section class="glass-card specialist-panel">
+                    <h2>Specialist Recommendation</h2>
+                    <div id="specialistInfo" class="specialist-content">
+                        <h4 id="specialistName">---</h4>
+                        <p id="specialistReason">---</p>
+                    </div>
+                </section>
+
+                <!-- Diet Planner -->
+                <section class="glass-card diet-planner full-width">
+                    <h2>Personalized Diet Plan</h2>
+                    <div class="diet-grid">
+                        <div class="diet-item">
+                            <h3>Breakfast</h3>
+                            <ul id="breakfastList"></ul>
+                        </div>
+                        <div class="diet-item">
+                            <h3>Lunch</h3>
+                            <ul id="lunchList"></ul>
+                        </div>
+                        <div class="diet-item">
+                            <h3>Dinner</h3>
+                            <ul id="dinnerList"></ul>
+                        </div>
+                        <div class="diet-item">
+                            <h3>Snacks</h3>
+                            <ul id="snacksList"></ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Daily Routine Timeline -->
+                <section class="glass-card timeline-panel full-width">
+                    <h2>Daily Routine Timeline</h2>
+                    <div id="routineTimeline" class="timeline"></div>
+                </section>
+
+                <!-- Exercise & Hydration -->
+                <section class="glass-card exercise-panel">
+                    <h2>Exercise Plan</h2>
+                    <div id="exerciseContent">
+                        <div class="stat-item">
+                            <span class="label">Duration:</span>
+                            <span id="exerciseDuration" class="value">---</span>
+                        </div>
+                        <ul id="exerciseActivities" class="activity-list"></ul>
+                    </div>
+                </section>
+
+                <section class="glass-card hydration-panel">
+                    <h2>Hydration</h2>
+                    <div id="hydrationContent">
+                        <div class="hydration-circle">
+                            <span id="hydrationTarget">---</span>
+                            <small>Goal</small>
+                        </div>
+                        <p id="hydrationTip" class="tip-text"></p>
+                    </div>
+                </section>
+
+                <!-- Monitoring & Prevention -->
+                <section class="glass-card monitoring-panel">
+                    <h2>Monitoring Checklist</h2>
+                    <ul id="monitoringList" class="checklist"></ul>
+                </section>
+
+                <section class="glass-card prevention-panel">
+                    <h2>Prevention Tips</h2>
+                    <ul id="preventionTipsList" class="bullet-list"></ul>
+                </section>
+
+                <!-- Warning Signs & Follow-up -->
+                <section class="glass-card warning-panel">
+                    <h2>Warning Signs</h2>
+                    <ul id="warningSignsList" class="warning-list"></ul>
+                </section>
+
+                <section class="glass-card followup-panel">
+                    <h2>Follow-up Tests</h2>
+                    <ul id="followupList" class="bullet-list"></ul>
+                </section>
+            </div>
+
+            <div class="actions-footer">
+                <button id="downloadReport" class="btn btn-primary">Download Analysis Report</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 AI Medical Analyser. For informational purposes only.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
