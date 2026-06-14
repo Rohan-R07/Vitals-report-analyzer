@@ -18,40 +18,58 @@ class Backend:
         self.model = None
         self.accuracy = None
 
+    # Loading Dataset and storing it in csvData variable
     def setDataset(self, file):
         self.csvData = pandas.read_excel(file)
 
+    # Training models
     def trainModel(self):
 
+        # X is a variable in which the first 7 attributes of the dataset is stored. THESE are INPUT VALUES USING THIS Y WILL BE PREDICTED
         X = self.csvData[["WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC"]]
 
+        # Prediction input / output values or labels
         y = self.csvData["All_Class"]
+
+        # splitting dataset into training and testing data (using a single dataset for both the task)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42
         )
 
+        # Creating an random forest classifer and storing it in self.model (this model have 100 decision trees)
         self.model = RandomForestClassifier(n_estimators=100, random_state=42)
 
+        # Training model by giving it data
         self.model.fit(X_train, y_train)
 
+        # Model is testing on the given dataset
         predictions = self.model.predict(X_test)
 
+        # comparing it with actual values to calculate the accuracy of the models
         self.accuracy = accuracy_score(y_test, predictions)
 
+        # storing trained model so that we don't need to repeat this process again and again
         joblib.dump(self.model, "anemia_model.pkl")
 
+    # Loading trained model
     def loadModel(self):
         self.model = joblib.load("anemia_model.pkl")
 
+    # Making Prediction patient_dict means the the value input values extracted from pdf and passed here
     def predict(self, patient_dict):
 
+        # using the parms and converting it into
         patient_df = pandas.DataFrame([patient_dict])
 
+        # predicting Y using the given patient df
         prediction = self.model.predict(patient_df)
 
+        # returns the predicted values (0: Normal, 1: Hemoglobin Anemia, 2: Iron Deficiency Anemia, 3: Folate Deficiency Anemia, 4: Vitamin B12 Deficiency Anemia)
         return prediction[0]
 
+    # this function is used to make the predicted number with a string which imply the diseases which they are having
     def getPredictionName(self, prediction):
+
         class_mapping = {
             0: "Normal",
             1: "Hemoglobin Anemia",
@@ -61,17 +79,24 @@ class Backend:
         }
         return class_mapping[prediction]
 
+    # Independent function just using to extract input values from the given PDF file
+    # The Input_ values is always a fixed sequence of numbers (WBC, RBC, HGB, HCT, MCV, MCH, MCHC)
     def extractPdfValues(self, pdf_file):
 
+        # selelctin pdf file
         pdf = PdfReader(pdf_file)
 
+        # creating a storing variable
         all_text = ""
 
+        # iterating to all pages and then extracting text then finally storing it in a single variable
         for page in pdf.pages:
             all_text += page.extract_text()
 
+        # a external dictonary  to store values
         patient_data = {}
 
+        # The searching for these values in the pdf
         features = {
             "WBC": [
                 r"Total WBC count\s+\d+\s+(\d+\.?\d*)",
@@ -135,6 +160,7 @@ class Backend:
             ],
         }
 
+        # searching for the given features in the extracted text
         for model_name, patterns in features.items():
             for pattern in patterns:
                 match = re.search(pattern, all_text, re.IGNORECASE)
@@ -143,7 +169,7 @@ class Backend:
                     print(f"{model_name} = {patient_data[model_name]}")
                     break
 
-        # Normalization of units for WBC and Platelets (PLT)
+        # Normalization of units for WBC and Platelets (PLT) because some labs write report differently
         if "WBC" in patient_data:
             val = patient_data["WBC"]
             if val > 100.0:
@@ -157,6 +183,11 @@ class Backend:
                 print(f"Normalized PLT: {val} -> {patient_data['PLT']}")
 
         return patient_data
+
+    """
+    # some times the value which is extraceted from the pdf is not in the range so we need to check it and some of them are not real or the way 
+    they write in reports are usually different is it is necessary to find the abnormal stuffs so that the accuracy of the model won't go down 
+    """
 
     def calculate_abnormal_findings(self, values):
         """

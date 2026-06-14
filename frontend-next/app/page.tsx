@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Brain, Salad, Activity, Stethoscope, Sparkles } from "lucide-react";
+import { FileText, Brain, Salad, Activity, Stethoscope, Sparkles, ShieldAlert } from "lucide-react";
 import UploadCard from "./components/UploadCard";
 import { analyzeReport } from "./lib/api";
 
@@ -114,7 +114,7 @@ export default function Home() {
             <Activity className="w-4 h-4 text-white" />
           </div>
           <span className="font-heading font-bold text-lg tracking-tight text-white">
-            Hema<span className="text-sky-400 font-semibold">Pulse</span>
+            Ai-medical-report-<span className="text-sky-400 font-semibold">analyzer</span>
           </span>
         </div>
         <div className="flex items-center space-x-2 text-[10px] bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800/80 text-slate-400 font-semibold tracking-wide uppercase">
@@ -236,13 +236,97 @@ export default function Home() {
       </main>
 
       {/* Footer Branding */}
-      <footer className="max-w-6xl w-full mx-auto text-center z-10 pt-16 border-t border-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
-        <p>&copy; {new Date().getFullYear()} HemaPulse Healthcare Analytics. All rights reserved.</p>
-        <p className="text-[10px] text-slate-600 max-w-md sm:text-right leading-normal">
+      <footer className="max-w-6xl w-full mx-auto text-center z-10 pt-16 border-t border-slate-900/60 flex items-center justify-center text-xs text-slate-500 font-medium">
+        <p className="text-[10px] text-slate-600 max-w-md leading-normal">
           Disclaimer: This app is powered by AI evaluation models. It is for informational and educational use only,
           not a clinical diagnosis. Always consult with a licensed doctor.
         </p>
       </footer>
+
+      {/* Error Modal */}
+      <AnimatePresence>
+        {apiError && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setApiError(null)}
+              className="absolute inset-0 bg-[#02040a]/80 backdrop-blur-md"
+            />
+
+            {/* Modal Content Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="glass-panel w-full max-w-lg p-8 rounded-3xl relative overflow-hidden border border-rose-500/20 shadow-2xl shadow-rose-950/20 z-10 space-y-6"
+            >
+              {/* Decorative Glow */}
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl pointer-events-none bg-rose-500/10" />
+
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/25 flex items-center justify-center shadow-lg shadow-rose-500/10 text-rose-400">
+                  <ShieldAlert className="w-6 h-6 animate-pulse" />
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold font-heading text-slate-100">
+                    Invalid Report Detected
+                  </h3>
+                  <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
+                    {apiError}
+                  </p>
+                </div>
+              </div>
+
+              {/* CBC Parameters Checklist */}
+              <div className="bg-slate-900/40 border border-slate-800/60 p-5 rounded-2xl space-y-3">
+                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  Expected Report Parameters
+                </h4>
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500 font-semibold">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500/60" />
+                    <span>WBC (White Blood Cells)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500/60" />
+                    <span>RBC (Red Blood Cells)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500/60" />
+                    <span>Hemoglobin (Hb)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500/60" />
+                    <span>PCV / Hematocrit</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500/60" />
+                    <span>MCV, MCH, MCHC</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500/60" />
+                    <span>Platelet Count (PLT)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setApiError(null)}
+                  className="flex-1 py-3 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-750 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-500/10 hover:shadow-rose-600/20 active:scale-95 transition-all duration-200"
+                >
+                  Try Another File
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

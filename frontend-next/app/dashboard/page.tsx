@@ -186,9 +186,8 @@ export default function Dashboard() {
       </div>
 
       {/* Footer Branding */}
-      <footer className="max-w-6xl w-full mx-auto text-center z-10 pt-12 mt-12 border-t border-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
-        <p>&copy; {new Date().getFullYear()} HemaPulse Diagnostics Inc.</p>
-        <p className="text-[10px] text-slate-600 max-w-sm sm:text-right leading-normal">
+      <footer className="max-w-6xl w-full mx-auto text-center z-10 pt-12 mt-12 border-t border-slate-900/60 flex items-center justify-center text-xs text-slate-500 font-medium">
+        <p className="text-[10px] text-slate-600 max-w-sm leading-normal">
           Consult standard clinical parameters for verifying blood panels. AI estimates do not substitute formal
           pathological diagnoses.
         </p>
