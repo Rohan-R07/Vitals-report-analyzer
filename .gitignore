@@ -1,5 +1,5 @@
 .env
-anemia_model.pkl
+# anemia_model.pkl
 hacka.pdf
 medical_dataset.xlsx
 sampleReport.pdf

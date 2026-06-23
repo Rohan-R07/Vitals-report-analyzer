@@ -2,10 +2,23 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import os
+from dotenv import load_dotenv
 import json
 import tempfile
 import re
 import uvicorn
+
+# Load environment variables
+current_dir = os.path.dirname(os.path.abspath(__file__))
+dotenv_path = os.path.join(current_dir, ".env")
+load_dotenv(dotenv_path, override=True)
+
+hf_token = os.getenv("HF_TOKEN")
+if hf_token:
+    print(f"INFO: Loaded HF_TOKEN successfully (starts with {hf_token[:10]}...)")
+else:
+    print("WARNING: HF_TOKEN not found in environment!")
+
 from main import Backend
 
 # Initialize FastAPI App
@@ -58,20 +71,20 @@ async def api_analyze(file: UploadFile = File(...)):
                     status_code=400,
                     content={
                         "error": "Could not extract any medical parameters from the PDF. Please upload a clear blood report containing standard CBC metrics (WBC, RBC, Hemoglobin, etc.)."
-                    }
+                    },
                 )
 
             # Ensure all 7 features required by the Random Forest model are present in the exact order.
             # Fill missing keys with standard normal baselines to prevent model crashes.
             REQUIRED_FEATURES = ["WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC"]
             defaults = {
-                "WBC": 7.0,      # normal range: 4.5 - 11.0
-                "RBC": 5.0,      # normal range: 4.2 - 6.1
-                "HGB": 15.0,     # normal range: 12.0 - 18.0
-                "HCT": 45.0,     # normal range: 37.0 - 52.0
-                "MCV": 90.0,     # normal range: 80.0 - 100.0
-                "MCH": 30.0,     # normal range: 27.0 - 33.0
-                "MCHC": 34.0     # normal range: 32.0 - 36.0
+                "WBC": 7.0,  # normal range: 4.5 - 11.0
+                "RBC": 5.0,  # normal range: 4.2 - 6.1
+                "HGB": 15.0,  # normal range: 12.0 - 18.0
+                "HCT": 45.0,  # normal range: 37.0 - 52.0
+                "MCV": 90.0,  # normal range: 80.0 - 100.0
+                "MCH": 30.0,  # normal range: 27.0 - 33.0
+                "MCHC": 34.0,  # normal range: 32.0 - 36.0
             }
 
             sanitized_values = {}
@@ -96,11 +109,18 @@ async def api_analyze(file: UploadFile = File(...)):
             risk_level = backend.calculate_risk_level(severity)
 
             # Programmatically derive primary analysis
-            primary_analysis = backend.calculate_primary_analysis(prediction_name, severity, abnormal_findings)
+            primary_analysis = backend.calculate_primary_analysis(
+                prediction_name, severity, abnormal_findings
+            )
 
             # Pass programmatic results to prompt to explain and detail
             explanation_json_str = backend.generateExplaination(
-                prediction_name, clinical_values, severity, score_data["score"], abnormal_findings, normal_findings
+                prediction_name,
+                clinical_values,
+                severity,
+                score_data["score"],
+                abnormal_findings,
+                normal_findings,
             )
 
             clean_json = explanation_json_str.strip()
@@ -122,7 +142,7 @@ async def api_analyze(file: UploadFile = File(...)):
                     "severity": severity,
                     "physiological_score": score_data["score"],
                     "health_status": health_status,
-                    "risk_level": risk_level
+                    "risk_level": risk_level,
                 },
                 "primary_analysis": primary_analysis,
                 "condition_summary": primary_analysis["summary"],
@@ -135,7 +155,7 @@ async def api_analyze(file: UploadFile = File(...)):
                 "hydration": llm_data.get("hydration", {}),
                 "prevention_tips": llm_data.get("prevention_tips", []),
                 "follow_up_tests": llm_data.get("follow_up_tests", []),
-                "final_summary": llm_data.get("final_summary", [])
+                "final_summary": llm_data.get("final_summary", []),
             }
             return final_response
         finally:
@@ -148,4 +168,7 @@ async def api_analyze(file: UploadFile = File(...)):
 
 
 if __name__ == "__main__":
-    uvicorn.run("ui:app", host="0.0.0.0", port=8080, reload=True)
+    port = int(os.environ.get("PORT", 8080))
+    # Disable reload in production (when PORT is set) to prevent file system polling overhead
+    reload = os.environ.get("PORT") is None
+    uvicorn.run("ui:app", host="0.0.0.0", port=port, reload=reload)

@@ -9,7 +9,9 @@ import os
 import regex as re
 from openai import OpenAI
 
-load_dotenv()
+current_dir = os.path.dirname(os.path.abspath(__file__))
+dotenv_path = os.path.join(current_dir, ".env")
+load_dotenv(dotenv_path, override=True)
 
 
 class Backend:
@@ -436,7 +438,6 @@ class Backend:
         normal_findings,
     ):
         hf_token = os.getenv("HF_TOKEN")
-
         prompt = f"""
             You are a medical report analysis API.
 
