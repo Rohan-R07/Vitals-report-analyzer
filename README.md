@@ -27,7 +27,7 @@ Built with a robust Python backend (FastAPI, scikit-learn, PyPDF) and a premium 
    * Computes Physiological Score, Clinical Severity (`Normal`, `Mild`, `Moderate`, `Severe`), Risk Level (`Low`, `Moderate`, `High`), and groups `Abnormal Findings` and `Normal Findings` programmatically.
    * Derives a consistent, contradiction-free **Primary Analysis** title and summary.
 5. **AI Recommendation Pipeline**:
-   * Feed-forward pipeline that forwards calculated indices directly into Hugging Face’s Llama 3.1 LLM to compile formatted lifestyle recommendations (Specialist Referrals, Diet plans, Daily Routines, Exercise, Hydration) in structured JSON format without hallucinations.
+   * Feed-forward pipeline that forwards calculated indices directly into Google's Gemini API to compile formatted lifestyle recommendations (Specialist Referrals, Diet plans, Daily Routines, Exercise, Hydration) in structured JSON format without hallucinations.
 6. **Premium Medical Light Theme**:
    * Modern, clean, hospital/laboratory-themed design using soft clinic colors, cyan shadows, and elegant teal glassmorphism cards.
 7. **Report Validation & Custom Dialog Alerts**:
@@ -55,7 +55,7 @@ graph TD
     G -->|Risk Level| H
     F -->|Predicted Anemia Class| H
     
-    H --> I[Hugging Face Llama 3.1 Recommendations Pipeline]
+    H --> I[Google Gemini Recommendations Pipeline]
     I -->|Lifestyle JSON Response| J[FastAPI REST Response]
     J --> K[Next.js Premium Patient Dashboard]
     
@@ -86,7 +86,7 @@ Ai-medical-analyser/
 │   └── globals.css             # Styling system & animations
 ├── public/                     # Public assets & screenshots
 ├── medical_dataset.xlsx        # Excel dataset for RandomForest training
-├── .env                        # Local environment credentials (HuggingFace token)
+├── .env                        # Local environment credentials (Gemini API key)
 ├── package.json                # Frontend dependencies & scripts
 ├── tsconfig.json               # TypeScript configuration
 └── vercel.json                 # Vercel deployment configuration
@@ -117,9 +117,9 @@ Ai-medical-analyser/
    ```bash
    pip install -r api/requirements.txt
    ```
-4. Create a `.env` file in the root directory and add your Hugging Face API key:
+4. Create a `.env` file in the root directory and add your Google Gemini API key:
    ```env
-   HF_TOKEN=your_hugging_face_token_here
+   GEMINI_API_KEY=your_gemini_api_key_here
    ```
 5. Run the server:
    ```bash

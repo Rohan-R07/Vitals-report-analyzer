@@ -661,5 +661,5 @@ class Backend:
 #     # mapping the predicted value with a specific disease
 #     prediction_name = initBackend.getPredictionName(prediction)
 
-#     # finally using hugging face tokens to generate a output
+#     # finally using Google Gemini API to generate an output
 #     print(initBackend.generateExplaination(prediction_name, valu))
