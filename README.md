@@ -222,17 +222,71 @@ Open `http://localhost:3000` in your web browser.
 
 ---
 
-## Healthcare Partners Roadmap
+## Product Vision & Positioning
 
-Vitals is designed to bridge the gap between patient information and professional care. We are building a secure registry that helps patients find trusted, verified local providers matching their specific AI-analyzed blood profile.
+Vitals is positioned as an **AI-powered healthcare intelligence platform**—serving as an intelligent bridge between patients and verified healthcare providers. It is:
+*   **NOT** a Hospital Management System (HMS)
+*   **NOT** an ad-hoc doctor booking app
+*   **NOT** an automated scraping registry
 
+Our core vision is to build a high-fidelity diagnostic interpreter for patients and coordinate their follow-up care pathways by connecting them only to clinics that have undergone manual clinical verification.
+
+---
+
+## Business Model
+
+Vitals is currently **100% free** in the MVP phase, focusing entirely on solving the diagnostic communication gap. There are no advertisements or user monetization barriers in the MVP.
+
+The future sustainability and monetization of the platform will rely on the **Verified Healthcare Partner Ecosystem**:
+
+### 1. Verified Healthcare Partner Memberships
+Hospitals, specialized clinics, and diagnostic centers pay a recurring membership fee to be listed in our verified local provider registry. Benefits include:
+*   **Verified Partner badge** on patient-facing maps and cards.
+*   **AI-powered patient referrals** matching the center's specific clinical specialties.
+*   **Increased local visibility** in diagnostic-specific search parameters.
+*   **Future clinical onboarding tools** to manage patient intake.
+
+### 2. Referral Partnerships
+When a patient opts to schedule a consultation with a listed healthcare partner based on their report findings, the partner pays a small, compliance-approved referral commission.
+
+### 3. Consultation Booking Commission
+A commission fee taken per successful appointment booked and conducted directly through the Vitals scheduling interface.
+
+### 4. Premium Patient Subscriptions
+A patient-facing premium subscription tier containing advanced longevity features:
+*   **Historical Blood Panel Trends:** Track and plot biomarker changes over time.
+*   **AI Health Companion:** Ongoing conversational answers regarding blood count questions.
+*   **Family Health Vault:** Store and monitor panel histories for multiple family members.
+
+### 5. Diagnostic Lab Referrals
+Affiliated laboratories pay a referral fee to receive orders for follow-up blood panel draws recommended in patient lifestyle summaries.
+
+### 6. Healthcare Analytics Portal
+Privacy-preserving, aggregated, de-identified datasets sold to healthcare organizations to evaluate regional health indicators, complying strictly with patient-identifiable data regulations.
+
+---
+
+## Future Roadmap
+
+The transition from a standalone report analyzer to a secure, integrated care network is structured into three phases:
+
+```mermaid
+gantt
+    title Vitals Product Roadmap
+    dateFormat  YYYY-MM-DD
+    section Phase 1 (Current MVP)
+    Deterministic CBC Parser      :active, 2026-06-01, 2026-07-31
+    Random Forest ML Anemia       :active, 2026-06-01, 2026-07-31
+    Gemma-4 Lifestyle Summaries  :active, 2026-06-01, 2026-07-31
+    section Phase 2 (Care Connection)
+    Location-Aware Recommendations :2026-08-01, 2026-10-31
+    Partner Registry Portal        :2026-08-01, 2026-10-31
+    Manual Verification Workflows  :2026-08-01, 2026-10-31
+    section Phase 3 (Ecosystem Integration)
+    In-App Scheduling & Booking   :2026-11-01, 2027-02-28
+    Affiliate Lab Integrations    :2026-11-01, 2027-02-28
+    De-identified Analytics Hub   :2027-03-01, 2027-06-30
 ```
-[Patient CBC Report] ──> [AI Specialist Identification] ──> [Match Verified Partner Registry] ──> [Secure Referral]
-```
-
-### Verified Partner Registry
-* **Manual Verification:** Every partner clinic, hospital, and laboratory is manually verified by our team before listing. No scraping, no random clinics.
-* **Referrals Pipeline:** Future updates will enable clinics to receive structured medical files directly, allowing patients to schedule appointments with the recommended specialists.
 
 ---
 
