@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, CheckCircle2, AlertCircle, AlertTriangle, ShieldAlert } from "lucide-react";
+import { ChevronDown, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
 import { AbnormalFinding } from "../../types";
 
 interface BiomarkerCardProps {
@@ -56,32 +56,32 @@ export default function BiomarkerCard({ finding }: BiomarkerCardProps) {
   const getStatusStyles = () => {
     if (isNormal) {
       return {
-        badge: "bg-emerald-50 text-emerald-600 border-emerald-100",
-        indicator: "bg-emerald-500",
-        border: "border-slate-100 hover:border-emerald-200",
-        icon: <CheckCircle2 className="w-4 h-4 text-emerald-500" />,
+        badge: "bg-health-optimal/10 text-health-optimal border-health-optimal/20",
+        indicator: "bg-health-optimal",
+        border: "border-slate-200/60 hover:border-health-optimal/30",
+        icon: <CheckCircle2 className="w-4 h-4 text-health-optimal" />,
       };
     }
     if (isBorderline) {
       return {
-        badge: "bg-amber-50 text-amber-600 border-amber-100",
-        indicator: "bg-amber-500",
-        border: "border-amber-100 hover:border-amber-200",
-        icon: <AlertTriangle className="w-4 h-4 text-amber-500" />,
+        badge: "bg-health-warning/10 text-health-warning border-health-warning/20",
+        indicator: "bg-health-warning",
+        border: "border-health-warning/20 hover:border-health-warning/40",
+        icon: <AlertTriangle className="w-4 h-4 text-health-warning" />,
       };
     }
     if (isLow || isHigh) {
       return {
-        badge: "bg-rose-50 text-rose-600 border-rose-100",
-        indicator: "bg-rose-500",
-        border: "border-rose-100 hover:border-rose-200",
-        icon: <AlertCircle className="w-4 h-4 text-rose-500" />,
+        badge: "bg-health-danger/10 text-health-danger border-health-danger/20",
+        indicator: "bg-health-danger",
+        border: "border-health-danger/20 hover:border-health-danger/40",
+        icon: <AlertCircle className="w-4 h-4 text-health-danger" />,
       };
     }
     return {
-      badge: "bg-slate-50 text-slate-600 border-slate-100",
+      badge: "bg-slate-100 text-slate-600 border-slate-200",
       indicator: "bg-slate-500",
-      border: "border-slate-100 hover:border-slate-200",
+      border: "border-slate-200 hover:border-slate-300",
       icon: <AlertCircle className="w-4 h-4 text-slate-500" />,
     };
   };
@@ -91,25 +91,25 @@ export default function BiomarkerCard({ finding }: BiomarkerCardProps) {
   return (
     <div
       onClick={() => setIsOpen(!isOpen)}
-      className={`bg-white border rounded-2xl p-5 cursor-pointer transition-all duration-300 ${styles.border} ${
+      className={`bg-white border rounded-2xl p-6 cursor-pointer transition-all duration-300 ${styles.border} ${
         isOpen ? "shadow-md" : "shadow-sm"
       }`}
     >
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-5">
         {/* Top details Row */}
         <div className="flex justify-between items-start">
           <div className="space-y-0.5">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
               {range.fullName}
             </span>
-            <h4 className="text-base font-bold text-slate-800 font-heading">
+            <h4 className="text-base font-semibold text-slate-900">
               {finding.parameter}
             </h4>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3.5">
             <div className="text-right">
-              <span className="text-base font-extrabold text-slate-800">
+              <span className="text-base font-bold text-slate-900">
                 {value}
               </span>
               <span className="text-xs text-slate-400 font-medium ml-1">
@@ -136,7 +136,7 @@ export default function BiomarkerCard({ finding }: BiomarkerCardProps) {
           <div className="relative h-2 w-full bg-slate-100 rounded-full">
             {/* Healthy normal range overlay */}
             <div
-              className="absolute top-0 bottom-0 bg-emerald-100/70 border-x border-emerald-200/50"
+              className="absolute top-0 bottom-0 bg-primary/10 border-x border-primary/10"
               style={{ left: `${normalLeft}%`, width: `${normalWidth}%` }}
             />
             {/* Measured Value Pointer */}
@@ -150,7 +150,7 @@ export default function BiomarkerCard({ finding }: BiomarkerCardProps) {
           {/* Reference range scale text labels */}
           <div className="flex justify-between text-[10px] text-slate-400 font-semibold px-0.5">
             <span>Low Range</span>
-            <span className="text-slate-500 font-bold">
+            <span className="text-slate-500 font-semibold">
               Normal: {range.min} - {range.max} {range.unit}
             </span>
             <span>High Range</span>
@@ -168,7 +168,7 @@ export default function BiomarkerCard({ finding }: BiomarkerCardProps) {
               className="overflow-hidden border-t border-slate-100 pt-4"
               onClick={(e) => e.stopPropagation()} // Prevent closing card when clicking contents
             >
-              <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <div className="flex items-start space-x-3 bg-slate-50 p-4 rounded-xl border border-slate-200/40">
                 <div className="mt-0.5 flex-shrink-0">
                   {styles.icon}
                 </div>

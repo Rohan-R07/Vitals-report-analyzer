@@ -2,35 +2,31 @@
 
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --color-primary: #0d9488;
-  --color-primary-hover: #0f766e;
-  --color-primary-light: #f0fdfa;
+  --color-primary: #00685f;
+  --color-primary-hover: #005049;
+  --color-primary-light: #f4fffc;
   
-  --color-health-optimal: #10b981;
-  --color-health-optimal-light: #f0fdf4;
-  --color-health-warning: #d97706;
-  --color-health-warning-light: #fffbeb;
-  --color-health-danger: #ef4444;
-  --color-health-danger-light: #fef2f2;
+  --color-health-optimal: #006d3e;
+  --color-health-optimal-light: #8cf5b2;
+  --color-health-warning: #735c00;
+  --color-health-warning-light: #ffe086;
+  --color-health-danger: #ba1a1a;
+  --color-health-danger-light: #ffdad6;
 
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-  --color-slate-950: #020617;
+  --color-slate-50: #f5faf8;
+  --color-slate-100: #eaefed;
+  --color-slate-200: #dee4e1;
+  --color-slate-300: #bcc9c6;
+  --color-slate-400: #6d7a77;
+  --color-slate-500: #3d4947;
+  --color-slate-900: #171d1c;
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f5faf8;
+  --foreground: #171d1c;
 }
 
 body {
@@ -38,6 +34,7 @@ body {
   color: var(--foreground);
   overflow-x: hidden;
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -45,46 +42,55 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--foreground);
 }
 
-/* Premium Healthcare Card (Tactile Shadow & Spacing) */
+/* Premium Healthcare Card (Ambient Diffused Shadow & Roundness) */
 .clinical-card {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 1.5rem;
-  padding: 1.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(109, 122, 119, 0.12);
+  border-radius: 1.5rem; /* rounded-2xl / 24px */
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 104, 95, 0.04);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .clinical-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px rgba(0, 104, 95, 0.06);
+  border-color: rgba(0, 104, 95, 0.2);
+}
+
+/* Tonal nested elements (no double shadows) */
+.tonal-nested-card {
+  background-color: #f0f5f2;
+  border-radius: 1rem; /* rounded-lg / 16px */
+  padding: 1.25rem;
+  border: 1px solid rgba(109, 122, 119, 0.08);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #f5faf8;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #bcc9c6;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #6d7a77;
 }
 
 /* Printing Overrides */
 @media print {
   body {
     background-color: #ffffff !important;
-    color: #000000 !important;
-    font-size: 12pt !important;
+    color: #171d1c !important;
+    font-size: 11pt !important;
   }
 
   header, footer, button, .no-print {
@@ -92,9 +98,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .clinical-card {
-    border: 1px solid #000000 !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
     box-shadow: none !important;
+    border-radius: 0.75rem !important;
+    padding: 1.5rem !important;
     page-break-inside: avoid;
+    transform: none !important;
   }
 
   .interactive-element {

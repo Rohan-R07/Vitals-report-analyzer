@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { SlidersHorizontal, CheckCircle2, ChevronDown, Sparkles } from "lucide-react";
+import { SlidersHorizontal, CheckCircle2, ChevronDown } from "lucide-react";
 import { AbnormalFinding } from "../../types";
 import BiomarkerCard from "./BiomarkerCard";
 
@@ -39,16 +39,16 @@ export default function BiomarkerList({
       {/* Title block */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold font-heading text-slate-800 flex items-center space-x-2">
-            <SlidersHorizontal className="w-5 h-5 text-teal-600" />
+          <h2 className="text-xl font-semibold text-slate-900 flex items-center space-x-2.5">
+            <SlidersHorizontal className="w-5 h-5 text-primary" />
             <span>Blood Panel Markers</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-normal">
             Interactive breakdown of individual CBC parameter levels
           </p>
         </div>
         
-        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider bg-slate-50 border border-slate-100 px-3 py-1 rounded-full">
+        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm">
           {abnormalFindings.length + normalFindings.length} Total Parameters
         </span>
       </div>
@@ -59,14 +59,14 @@ export default function BiomarkerList({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-6 bg-emerald-50 border border-emerald-100 rounded-3xl text-center space-y-3"
+            className="p-6 bg-health-optimal/10 border border-health-optimal/20 rounded-2xl text-center space-y-3 shadow-sm"
           >
-            <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mx-auto border border-emerald-200">
+            <div className="w-10 h-10 bg-health-optimal/10 rounded-full flex items-center justify-center text-health-optimal mx-auto border border-health-optimal/20">
               <CheckCircle2 className="w-5 h-5" />
             </div>
             <div className="space-y-1">
-              <h4 className="text-sm font-bold text-slate-800">All Metrics Optimal</h4>
-              <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+              <h4 className="text-sm font-semibold text-slate-900">All Metrics Optimal</h4>
+              <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed font-normal">
                 Excellent! Every complete blood count metric extracted from your laboratory report falls entirely within standard healthy physiological thresholds.
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function BiomarkerList({
         ) : (
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5 px-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-health-danger" />
               <span>Flagged Out-of-Range ({abnormalFindings.length})</span>
             </h3>
             
@@ -97,13 +97,13 @@ export default function BiomarkerList({
 
       {/* Collapsible Normal Parameters Section */}
       {normalFindings.length > 0 && (
-        <div className="border-t border-slate-100 pt-6">
+        <div className="border-t border-slate-200/80 pt-6">
           <button
             onClick={() => setShowNormal(!showNormal)}
-            className="flex items-center justify-between w-full py-2 px-1 text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex items-center justify-between w-full py-2.5 px-2 text-slate-500 hover:text-slate-900 transition-colors bg-white border border-slate-200/60 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
           >
             <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-health-optimal" />
               <span className="text-xs font-bold uppercase tracking-wider">
                 Optimal Normal Parameters ({normalFindings.length})
               </span>
@@ -112,7 +112,7 @@ export default function BiomarkerList({
               animate={{ rotate: showNormal ? 180 : 0 }}
               transition={{ duration: 0.2 }}
             >
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4 text-slate-400" />
             </motion.div>
           </button>
 

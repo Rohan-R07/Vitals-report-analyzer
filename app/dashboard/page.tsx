@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { MedicalReportData, normalizeReportData } from "../types";
 
 // Import new guided components
@@ -52,10 +52,10 @@ export default function Dashboard() {
 
   if (!isReady || !reportData) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#f8fafc]">
+      <div className="flex-1 flex items-center justify-center bg-slate-50 min-h-screen">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-10 h-10 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-xs font-semibold">Preparing guided insights...</p>
+          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <p className="text-slate-400 text-xs font-semibold tracking-wider uppercase">Preparing guided insights...</p>
         </div>
       </div>
     );
@@ -65,7 +65,7 @@ export default function Dashboard() {
   const data = normalizeReportData(reportData);
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#f8fafc] text-slate-800">
+    <div className="flex-1 flex flex-col justify-between bg-slate-50 text-slate-900 min-h-screen">
       
       {/* 1. HERO SUMMARY SECTION */}
       <ReportHero
@@ -76,15 +76,15 @@ export default function Dashboard() {
         onBack={handleBackToUpload}
       />
 
-      {/* SECTION WRAPPER: Scroll and reveal detail blocks */}
-      <div className="max-w-4xl w-full mx-auto px-4 md:px-8 py-16 space-y-24 z-10 flex-1">
+      {/* SECTION WRAPPER: Centered fixed grid with wide margins */}
+      <div className="max-w-[1200px] w-full mx-auto px-6 md:px-16 py-16 space-y-20 z-10 flex-1">
         
         {/* 2. PARAMETERS DETAIL SECTION */}
         <motion.section
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           <BiomarkerList
             abnormalFindings={data.abnormal_findings || []}
@@ -96,8 +96,8 @@ export default function Dashboard() {
         <motion.section
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           <ClinicalInsights
             condition={data.primary_analysis?.title || "Normal"}
@@ -110,8 +110,8 @@ export default function Dashboard() {
         <motion.section
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           <LifestyleTracker
             diet={data.diet_plan}
@@ -128,8 +128,8 @@ export default function Dashboard() {
         <motion.section
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           <ClinicalReferrals
             specialist={data.recommended_specialist}
@@ -143,8 +143,8 @@ export default function Dashboard() {
         <motion.section
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           <ReportActions
             reportData={reportData}
@@ -155,8 +155,8 @@ export default function Dashboard() {
       </div>
 
       {/* FOOTER */}
-      <footer className="max-w-3xl w-full mx-auto text-center z-10 py-10 mt-10 border-t border-slate-100 flex flex-col items-center justify-center text-[10px] text-slate-400 font-medium space-y-2 no-print">
-        <p className="max-w-md leading-normal">
+      <footer className="max-w-[1200px] w-full mx-auto text-center z-10 py-10 mt-10 border-t border-slate-200/60 flex flex-col items-center justify-center text-[10px] text-slate-400 font-medium space-y-2 no-print">
+        <p className="max-w-md leading-relaxed">
           Consult standard clinical parameters for verifying blood panels. AI estimates do not substitute formal medical or pathological diagnoses.
         </p>
       </footer>
