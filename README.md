@@ -1,13 +1,6 @@
 
 ---
 
-## 🚀 Live Deployment & Links
-
-* **Live Application (Production)**: [https://ai-medical-report-analyzer-theta.vercel.app](https://ai-medical-report-analyzer-theta.vercel.app)
-* **GitHub Repository**: [https://github.com/Rohan-R07/Ai-medical-report-analyzer](https://github.com/Rohan-R07/Ai-medical-report-analyzer)
-
----
-
 ## Key Features
 
 1. **Deterministic PDF Extraction & Normalization**: 
