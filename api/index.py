@@ -52,6 +52,11 @@ else:
     )
 
 
+@app.get("/")
+async def root():
+    return {"status": "healthy", "service": "AI Medical Report Analyzer API"}
+
+
 @app.get("/api/health")
 async def api_health():
     return {"status": "healthy"}
