@@ -145,6 +145,88 @@ def extract_text_via_ocr(pdf_file):
         logger.error(f"Error during OCR extraction: {e}")
         return ""
 
+
+def extract_parameters_via_vision(pdf_file):
+    try:
+        import fitz
+        import base64
+        from openai import OpenAI
+
+        api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            return {}
+
+        model = os.getenv("OPENROUTER_MODEL") or "google/gemma-4-26b-a4b-it"
+
+        doc = fitz.open(pdf_file)
+        if len(doc) == 0:
+            return {}
+
+        pix = doc[0].get_pixmap(dpi=150)
+        img_bytes = pix.tobytes("png")
+        b64_str = base64.b64encode(img_bytes).decode("utf-8")
+
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key
+        )
+
+        prompt = (
+            "Extract all Complete Blood Count (CBC) parameter values from this laboratory report image. "
+            "Focus on finding numeric values for: WBC, RBC, HGB, HCT, MCV, MCH, MCHC, PLT. "
+            "Return ONLY a valid JSON object mapping parameter names to numbers, e.g. "
+            '{"WBC": 7.0, "RBC": 5.0, "HGB": 14.5, "HCT": 42.0, "MCV": 90.0, "MCH": 30.0, "MCHC": 33.0, "PLT": 250.0}.'
+        )
+
+        logger.info(f"Initiating Vision LLM extraction with model: {model}...")
+        response = client.chat.completions.create(
+            model=model,
+            max_tokens=2000,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/png;base64,{b64_str}"
+                            }
+                        }
+                    ]
+                }
+            ]
+        )
+
+        content = response.choices[0].message.content or ""
+        clean_json = content.strip()
+        if clean_json.startswith("```json"):
+            clean_json = clean_json[7:]
+        if clean_json.endswith("```"):
+            clean_json = clean_json[:-3]
+
+        json_match = re.search(r"\{.*\}", clean_json, re.DOTALL)
+        if json_match:
+            clean_json = json_match.group(0)
+
+        data = json.loads(clean_json)
+        vision_data = {}
+        if isinstance(data, dict):
+            for k, v in data.items():
+                k_upper = str(k).upper()
+                if k_upper in ["WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "PLT"]:
+                    try:
+                        val = float(v)
+                        vision_data[k_upper] = normalize_unit(k_upper, val, "")
+                    except Exception:
+                        pass
+        logger.info(f"Vision LLM extracted parameters: {list(vision_data.keys())}")
+        return vision_data
+    except Exception as e:
+        logger.error(f"Vision LLM parameter extraction failed: {e}")
+        return {}
+
+
 def extract_parameters_from_text(text):
     patient_data = {}
     
@@ -326,33 +408,30 @@ class Backend:
                 
             text_success = True
 
-        # OCR Fallback if PyPDF text is insufficient or confidence is below 70% (less than 6 parameters)
+        # Fallback to Vision LLM or OCR if text is insufficient or confidence is below 70% (less than 6 parameters)
         if is_empty_or_tiny or len(patient_data) < 6:
-            logger.info("PyPDF text is insufficient or confidence < 70%. Falling back to OCR...")
-            ocr_text = extract_text_via_ocr(pdf_file)
+            logger.info("Text extraction yielded < 6 parameters. Attempting Vision LLM parameter extraction...")
+            vision_patient_data = extract_parameters_via_vision(pdf_file)
             
-            if len(ocr_text.strip()) >= 50:
+            if len(vision_patient_data) >= len(patient_data) and len(vision_patient_data) > 0:
                 ocr_used = True
-                normalized_ocr_text = normalize_text(ocr_text)
-                alias_normalized_ocr_text = normalize_aliases(normalized_ocr_text)
-                ocr_patient_data = extract_parameters_from_text(alias_normalized_ocr_text)
+                patient_data = vision_patient_data
+                text_success = True
+                extracted_count = len(patient_data)
+                confidence = 1.0 if extracted_count == 8 else (0.90 if extracted_count == 7 else (0.75 if extracted_count == 6 else (extracted_count / 8.0) * 0.8))
+            else:
+                logger.info("Falling back to local OCR...")
+                ocr_text = extract_text_via_ocr(pdf_file)
                 
-                # Calculate OCR confidence
-                ocr_extracted_count = len(ocr_patient_data)
-                ocr_confidence = 0.0
-                if ocr_extracted_count == 8:
-                    ocr_confidence = 1.0
-                elif ocr_extracted_count == 7:
-                    ocr_confidence = 0.90
-                elif ocr_extracted_count == 6:
-                    ocr_confidence = 0.75
-                else:
-                    ocr_confidence = (ocr_extracted_count / 8.0) * 0.8
-                
-                if len(ocr_patient_data) >= len(patient_data):
-                    patient_data = ocr_patient_data
-                    confidence = ocr_confidence
-                    text_success = True
+                if len(ocr_text.strip()) >= 50:
+                    ocr_used = True
+                    normalized_ocr_text = normalize_text(ocr_text)
+                    alias_normalized_ocr_text = normalize_aliases(normalized_ocr_text)
+                    ocr_patient_data = extract_parameters_from_text(alias_normalized_ocr_text)
+                    
+                    if len(ocr_patient_data) >= len(patient_data):
+                        patient_data = ocr_patient_data
+                        text_success = True
 
         # Calculate final lists of detected/missing parameters
         all_features = ["WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "PLT"]
