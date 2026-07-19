@@ -278,15 +278,29 @@ class Backend:
         ocr_used = False
         text_success = False
 
+        # Try PyMuPDF (fitz) first as it is much more robust for layout tables
         try:
-            pdf = PdfReader(pdf_file)
-            for page in pdf.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    all_text += page_text + " "
+            import fitz
+            doc = fitz.open(pdf_file)
+            for page in doc:
+                text_content = page.get_text("text")
+                if text_content:
+                    all_text += text_content + " "
             all_text = all_text.strip()
         except Exception as e:
-            logger.error(f"PyPDF extraction error: {e}")
+            logger.error(f"PyMuPDF text extraction error: {e}")
+
+        # Fallback to PyPDF if PyMuPDF extracted nothing
+        if not all_text:
+            try:
+                pdf = PdfReader(pdf_file)
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        all_text += page_text + " "
+                all_text = all_text.strip()
+            except Exception as e:
+                logger.error(f"PyPDF extraction error: {e}")
 
         # Check if PyPDF returned little or no text
         is_empty_or_tiny = len(all_text.strip()) < 100
